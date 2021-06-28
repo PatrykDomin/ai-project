@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id          Int        @id @default(autoincrement())
+  role        Role       @default(USER)
+  name        String     @unique
+  password    String
+  description String?
+  pets        Pet[]
+  reactions   Reaction[]
+  petPosts    PetPost[]
+}
+
+model Pet {
+  id       Int       @id @default(autoincrement())
+  name     String
+  petType  String
+  petBreed String?
+  petPosts PetPost[]
+
+  // relation
+  user   User? @relation(fields: [userId], references: [id])
+  userId Int?
+}
+
+model PetPost {
+  id        Int        @id @default(autoincrement())
+  createdAt DateTime   @default(now())
+  title     String
+  content   String
+  reactions Reaction[]
+
+  // relation
+  user   User? @relation(fields: [userId], references: [id])
+  userId Int?
+  pet    Pet?  @relation(fields: [petId], references: [id])
+  petId  Int?
+}
+
+model Reaction {
+  id Int @id @default(autoincrement())
+
+  // relation
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  petPost   PetPost? @relation(fields: [petPostId], references: [id])
+  petPostId Int?
+}
