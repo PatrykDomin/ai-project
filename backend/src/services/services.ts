@@ -2,13 +2,23 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-const getUser = async (name: string, pass: string) => {
+const addUser = async (name: string, pass: string) => {
+  await prisma.user.create({
+    data: {
+      name,
+      password: pass,
+      role: 'USER',
+    },
+  });
+};
+
+const getUser = async (name: string) => {
   const user = await prisma.user.findUnique({
     where: {
       name,
     },
   });
-  return user.password === pass ? user : null;
+  return user;
 };
 
 const getUserById = async (id: number) => {
@@ -47,4 +57,4 @@ const getAllUserPosts = async (userId: number) => {
   return userPosts;
 };
 
-export { getUser, getUserById, getAllUserPets, getAllPetPosts, getAllUserPosts };
+export { addUser, getUser, getUserById, getAllUserPets, getAllPetPosts, getAllUserPosts };
