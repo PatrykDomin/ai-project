@@ -1,5 +1,8 @@
 import { Switch, Route } from 'react-router-dom';
+import { Home } from '../features/Home';
 import { Register } from '../features/Register';
+import { Search } from '../features/Search';
+import { SinglePet } from '../features/SinglePet';
 
 export const Router = () => {
   return (
@@ -8,14 +11,14 @@ export const Router = () => {
         <Register />
       </Route>
 
-      <Route path="/" exact>
-        <div>home</div>
+      <Route path="/:userId" exact>
+        <Home />
       </Route>
-      <Route path="/:userId/pets" exact>
-        <div>pets</div>
+      <Route path="/:userId/search" exact>
+        <Search />
       </Route>
       <Route path="/:userId/pets/:petId" exact>
-        <div>petposts</div>
+        <SinglePet />
       </Route>
     </Switch>
   );

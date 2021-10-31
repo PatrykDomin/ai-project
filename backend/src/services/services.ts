@@ -26,35 +26,96 @@ const getUserById = async (id: number) => {
     where: {
       id,
     },
+    include: {
+      pets: true,
+    },
   });
   return user;
 };
 
-const getAllUserPets = async (userId: number) => {
-  const userPets = await prisma.pet.findMany({
-    where: {
+const addUserPet = async (
+  userId: number,
+  name: string,
+  petType: string,
+  petBreed: string
+) => {
+  await prisma.pet.create({
+    data: {
+      name,
+      petType,
+      petBreed,
       userId,
     },
   });
-  return userPets;
 };
 
-const getAllPetPosts = async (petId: number) => {
-  const petPosts = await prisma.petPost.findMany({
+const getPetById = async (id: number) => {
+  const pet = await prisma.pet.findUnique({
     where: {
+      id,
+    },
+    include: {
+      petPosts: { include: { reactions: true } },
+      user: true,
+    },
+  });
+  return pet;
+};
+
+const addUserPetPost = async (
+  userId: number,
+  title: string,
+  content: string,
+  petId: number
+) => {
+  await prisma.petPost.create({
+    data: {
+      title,
+      content,
+      createdAt: new Date(),
       petId,
-    },
-  });
-  return petPosts;
-};
-
-const getAllUserPosts = async (userId: number) => {
-  const userPosts = await prisma.petPost.findMany({
-    where: {
       userId,
     },
   });
-  return userPosts;
 };
 
-export { addUser, getUser, getUserById, getAllUserPets, getAllPetPosts, getAllUserPosts };
+const addReaction = async (userId: number, postId: number) => {
+  await prisma.reaction.create({
+    data: {
+      userId,
+      petPostId: postId,
+    },
+  });
+};
+
+const getAllPets = async (search: string) => {
+  const pets = await prisma.pet.findMany({
+    where: {
+      OR: [{ name: { contains: search } }],
+    },
+    include: {
+      user: true,
+    },
+  });
+  return pets;
+};
+
+const deletePost = async (postId: number) => {
+  await prisma.petPost.delete({
+    where: {
+      id: postId,
+    },
+  });
+};
+
+export {
+  addUser,
+  getUser,
+  getUserById,
+  addUserPet,
+  getPetById,
+  addUserPetPost,
+  addReaction,
+  getAllPets,
+  deletePost,
+};

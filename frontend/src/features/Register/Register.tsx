@@ -13,26 +13,27 @@ export const Register: React.FC = () => {
 
   useEffect(() => {
     if (user.name) {
-      history.push('/');
+      history.replace(`/${user.id}`);
     }
-  }, [user.name, history]);
+  }, [user.name, user.id, history]);
 
-  return user.token ? (
-    <div>
-      <Typography>Jesteś już zalogowany</Typography>
-    </div>
-  ) : (
-    <div>
+  return (
+    <div className="flex flex-col justify-center items-center mt-12 h-full min-h-full w-full">
       <Typography>Logowanie / Rejestracja</Typography>
-      <form>
-        <TextField value={name} label="Nazwa" onChange={(e) => setName(e.target.value)} />
+      <form className="flex flex-col w-1/3">
+        <TextField
+          value={name}
+          label="Nazwa"
+          onChange={(e) => setName(e.target.value)}
+          style={{ marginBottom: 12 }}
+        />
         <TextField
           value={password}
           type="password"
           label="Hasło"
           onChange={(e) => setPassword(e.target.value)}
         />
-        <div>
+        <div className="flex flex-row justify-evenly mt-4">
           <Button onClick={() => login(name, password)}>Zaloguj</Button>
           <Button onClick={() => register(name, password)}>Zarejestruj</Button>
         </div>

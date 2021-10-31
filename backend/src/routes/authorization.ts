@@ -40,10 +40,12 @@ authRouter.post('/login', async (req, res) => {
       const token = jwt.sign(
         { id: user.id, isAdmin: user.role === 'ADMIN' },
         process.env.SECRET_TOKEN as jwt.Secret,
-        { expiresIn: '20m' }
+        { expiresIn: '1h' }
       );
 
-      res.header('auth-token', token).send({ name: user.name, role: user.role, token });
+      res
+        .header('auth-token', token)
+        .send({ id: user.id, name: user.name, role: user.role, token });
     } else {
       res.status(400).send('Błędne hasło');
     }
